@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/SlidingTabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"
+        android:text="SlidingTabLayout"
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/CommonTabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"
+        android:text="CommonTabLayout"
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/SegmentTabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"
+        android:text="SegmentTabLayout"
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/ScrollTabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"
+        android:text="ScrollTabLayout"
+        android:textAllCaps="false" />
+
+</LinearLayout>

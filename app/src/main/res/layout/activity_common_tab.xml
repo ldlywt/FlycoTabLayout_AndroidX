@@ -24,7 +24,7 @@
             tl:tl_underline_color="#DDDDDD"
             tl:tl_underline_height="1dp"/>
 
-        <android.support.v4.view.ViewPager
+        <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/vp_2"
             android:layout_width="match_parent"
             android:layout_height="84dp"/>
@@ -51,7 +51,7 @@
         </FrameLayout>
 
         <com.flyco.tablayout.CommonTabLayout
-            android:id="@+id/tl_3"
+            android:id="@+id/tl_view_page"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:background="#ffffff"
