@@ -1,29 +1,27 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tl="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="#eeeeee"
-    android:orientation="vertical"
-    android:scrollbars="none">
+              xmlns:tl="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="#eeeeee"
+              android:orientation="vertical"
+              android:scrollbars="none">
 
     <com.flyco.tablayout.ScrollTabLayout
         android:id="@+id/tablayout"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="#3ff0"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp"
-        tl:tl_textSelectColor="#444"
         tl:tl_textBold="SELECT"
+        tl:tl_textSelectColor="#444"
         tl:tl_underline_color="#1A000000"
         tl:tl_underline_gravity="TOP"
-        tl:tl_underline_height="1dp" />
+        tl:tl_underline_height="1dp"/>
 
 
     <FrameLayout
         android:id="@+id/fl_content"
-        android:background="#fcc"
         android:layout_width="match_parent"
-        android:layout_height="400dp"/>
+        android:layout_height="400dp"
+        android:background="#fcc"/>
 
 </LinearLayout>

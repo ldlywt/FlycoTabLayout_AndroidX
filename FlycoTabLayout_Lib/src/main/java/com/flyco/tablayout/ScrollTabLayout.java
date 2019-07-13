@@ -5,13 +5,9 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.Rect;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.SparseArray;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -20,12 +16,6 @@ import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.viewpager2.adapter.FragmentStateAdapter;
-import androidx.viewpager2.widget.ViewPager2;
 
 import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.flyco.tablayout.utils.UnreadMsgUtils;
@@ -37,9 +27,6 @@ import java.util.ArrayList;
  * 滑动TabLayout,对于ViewPager无依赖
  */
 public class ScrollTabLayout extends HorizontalScrollView {
-    private static final int STYLE_NORMAL = 0;
-    private static final int STYLE_TRIANGLE = 1;
-    private static final int STYLE_BLOCK = 2;
     /**
      * title
      */
@@ -52,35 +39,13 @@ public class ScrollTabLayout extends HorizontalScrollView {
     private int mCurrentTab;
     private int mTabCount;
     /**
-     * 用于绘制显示器
-     */
-    private Rect mIndicatorRect = new Rect();
-    /**
      * 用于实现滚动居中
      */
-    private Rect mTabRect = new Rect();
-    private GradientDrawable mIndicatorDrawable = new GradientDrawable();
     private Paint mRectPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Paint mDividerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private Paint mTrianglePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private Path mTrianglePath = new Path();
-    private int mIndicatorStyle = STYLE_NORMAL;
     private float mTabPadding;
     private boolean mTabSpaceEqual;
     private float mTabWidth;
-    /**
-     * indicator
-     */
-    private int mIndicatorColor;
-    private float mIndicatorHeight;
-    private float mIndicatorWidth;
-    private float mIndicatorCornerRadius;
-    private float mIndicatorMarginLeft;
-    private float mIndicatorMarginTop;
-    private float mIndicatorMarginRight;
-    private float mIndicatorMarginBottom;
-    private int mIndicatorGravity;
-    private boolean mIndicatorWidthEqualTitle;
     /**
      * underline
      */
@@ -111,6 +76,10 @@ public class ScrollTabLayout extends HorizontalScrollView {
         this(context, null, 0);
     }
 
+    public ScrollTabLayout(Context context, AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
+
     public ScrollTabLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setFillViewport(true);//设置滚动视图是否可以伸缩其内容以填充视口
@@ -139,20 +108,6 @@ public class ScrollTabLayout extends HorizontalScrollView {
 
     private void obtainAttributes(Context context, AttributeSet attrs) {
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.ScrollTabLayout);
-
-        mIndicatorStyle = ta.getInt(R.styleable.ScrollTabLayout_tl_indicator_style, STYLE_NORMAL);
-        mIndicatorColor = ta.getColor(R.styleable.ScrollTabLayout_tl_indicator_color, Color.parseColor(mIndicatorStyle == STYLE_BLOCK ? "#4B6A87" : "#ffffff"));
-        mIndicatorHeight = ta.getDimension(R.styleable.ScrollTabLayout_tl_indicator_height,
-                dp2px(mIndicatorStyle == STYLE_TRIANGLE ? 4 : (mIndicatorStyle == STYLE_BLOCK ? -1 : 2)));
-        mIndicatorWidth = ta.getDimension(R.styleable.ScrollTabLayout_tl_indicator_width, dp2px(mIndicatorStyle == STYLE_TRIANGLE ? 10 : -1));
-        mIndicatorCornerRadius = ta.getDimension(R.styleable.ScrollTabLayout_tl_indicator_corner_radius, dp2px(mIndicatorStyle == STYLE_BLOCK ? -1 : 0));
-        mIndicatorMarginLeft = ta.getDimension(R.styleable.ScrollTabLayout_tl_indicator_margin_left, dp2px(0));
-        mIndicatorMarginTop = ta.getDimension(R.styleable.ScrollTabLayout_tl_indicator_margin_top, dp2px(mIndicatorStyle == STYLE_BLOCK ? 7 : 0));
-        mIndicatorMarginRight = ta.getDimension(R.styleable.ScrollTabLayout_tl_indicator_margin_right, dp2px(0));
-        mIndicatorMarginBottom = ta.getDimension(R.styleable.ScrollTabLayout_tl_indicator_margin_bottom, dp2px(mIndicatorStyle == STYLE_BLOCK ? 7 : 0));
-        mIndicatorGravity = ta.getInt(R.styleable.ScrollTabLayout_tl_indicator_gravity, Gravity.BOTTOM);
-        mIndicatorWidthEqualTitle = ta.getBoolean(R.styleable.ScrollTabLayout_tl_indicator_width_equal_title, false);
-
         mUnderlineColor = ta.getColor(R.styleable.ScrollTabLayout_tl_underline_color, Color.parseColor("#ffffff"));
         mUnderlineHeight = ta.getDimension(R.styleable.ScrollTabLayout_tl_underline_height, dp2px(0));
         mUnderlineGravity = ta.getInt(R.styleable.ScrollTabLayout_tl_underline_gravity, Gravity.BOTTOM);
@@ -187,8 +142,6 @@ public class ScrollTabLayout extends HorizontalScrollView {
         if (mCurrentTab > 0) {
             /**HorizontalScrollView移动到当前tab,并居中*/
             newScrollX -= getWidth() / 2 - getPaddingLeft();
-//            calcIndicatorRect();
-            newScrollX += ((mTabRect.right - mTabRect.left) / 2);
         }
 
         if (newScrollX != mLastScrollX) {
@@ -206,9 +159,11 @@ public class ScrollTabLayout extends HorizontalScrollView {
             View tabView = mTabsContainer.getChildAt(i);
             final boolean isSelect = i == position;
             TextView tab_title = (TextView) tabView.findViewById(R.id.tv_tab_title);
+            View indicator = tabView.findViewById(R.id.indicator);
 
             if (tab_title != null) {
                 tab_title.setTextColor(isSelect ? mTextSelectColor : mTextUnselectColor);
+                indicator.setVisibility(isSelect ? View.VISIBLE : View.GONE);
                 if (mTextBold == TEXT_BOLD_WHEN_SELECT) {
                     tab_title.getPaint().setFakeBoldText(isSelect);
                 }
@@ -226,61 +181,6 @@ public class ScrollTabLayout extends HorizontalScrollView {
         return (int) (sp * scale + 0.5f);
     }
 
-    private void calcIndicatorRect() {
-        View currentTabView = mTabsContainer.getChildAt(this.mCurrentTab);
-        float left = currentTabView.getLeft();
-        float right = currentTabView.getRight();
-
-        //for mIndicatorWidthEqualTitle
-        if (mIndicatorStyle == STYLE_NORMAL && mIndicatorWidthEqualTitle) {
-            TextView tab_title = (TextView) currentTabView.findViewById(R.id.tv_tab_title);
-            mTextPaint.setTextSize(mTextsize);
-            float textWidth = mTextPaint.measureText(tab_title.getText().toString());
-            margin = (right - left - textWidth) / 2;
-        }
-
-        if (this.mCurrentTab < mTabCount - 1) {
-            View nextTabView = mTabsContainer.getChildAt(this.mCurrentTab + 1);
-            float nextTabLeft = nextTabView.getLeft();
-            float nextTabRight = nextTabView.getRight();
-            //for mIndicatorWidthEqualTitle
-            if (mIndicatorStyle == STYLE_NORMAL && mIndicatorWidthEqualTitle) {
-                TextView next_tab_title = (TextView) nextTabView.findViewById(R.id.tv_tab_title);
-                mTextPaint.setTextSize(mTextsize);
-                float nextTextWidth = mTextPaint.measureText(next_tab_title.getText().toString());
-                float nextMargin = (nextTabRight - nextTabLeft - nextTextWidth) / 2;
-            }
-        }
-
-        mIndicatorRect.left = (int) left;
-        mIndicatorRect.right = (int) right;
-        //for mIndicatorWidthEqualTitle
-        if (mIndicatorStyle == STYLE_NORMAL && mIndicatorWidthEqualTitle) {
-            mIndicatorRect.left = (int) (left + margin - 1);
-            mIndicatorRect.right = (int) (right - margin - 1);
-        }
-
-        mTabRect.left = (int) left;
-        mTabRect.right = (int) right;
-
-        if (mIndicatorWidth < 0) {   //indicatorWidth小于0时,原jpardogo's PagerSlidingTabStrip
-
-        } else {//indicatorWidth大于0时,圆角矩形以及三角形
-            float indicatorLeft = currentTabView.getLeft() + (currentTabView.getWidth() - mIndicatorWidth) / 2;
-
-            if (this.mCurrentTab < mTabCount - 1) {
-                View nextTab = mTabsContainer.getChildAt(this.mCurrentTab + 1);
-            }
-
-            mIndicatorRect.left = (int) indicatorLeft;
-            mIndicatorRect.right = (int) (mIndicatorRect.left + mIndicatorWidth);
-        }
-    }
-
-    public ScrollTabLayout(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
-
 
     public void setTabs(ArrayList<String> titles) {
         mTitles = titles;
@@ -295,7 +195,7 @@ public class ScrollTabLayout extends HorizontalScrollView {
         this.mTabCount = mTitles.size();
         View tabView;
         for (int i = 0; i < mTabCount; i++) {
-            tabView = View.inflate(mContext, R.layout.layout_tab, null);
+            tabView = View.inflate(mContext, R.layout.layout_scroll_tab, null);
             CharSequence pageTitle = mTitles.get(i);
             addTab(i, pageTitle.toString(), tabView);
         }
@@ -318,7 +218,6 @@ public class ScrollTabLayout extends HorizontalScrollView {
                 int position = mTabsContainer.indexOfChild(v);
                 if (position != -1) {
                     updateTabSelection(position);
-                    Log.i("wutao-->onTabSelect", "mCurrentTab: " + mCurrentTab + "   position： " + position) ;
                     mCurrentTab = position;
                     scrollToCurrentTab();
                     if (mListener != null) {
@@ -332,7 +231,6 @@ public class ScrollTabLayout extends HorizontalScrollView {
             }
         });
 
-        /** 每一个Tab的布局参数 */
         LinearLayout.LayoutParams lp_tab = mTabSpaceEqual ?
                 new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT, 1.0f) :
                 new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
@@ -348,7 +246,9 @@ public class ScrollTabLayout extends HorizontalScrollView {
             View v = mTabsContainer.getChildAt(i);
 //            v.setPadding((int) mTabPadding, v.getPaddingTop(), (int) mTabPadding, v.getPaddingBottom());
             TextView tv_tab_title = (TextView) v.findViewById(R.id.tv_tab_title);
+            View indicator = v.findViewById(R.id.indicator);
             if (tv_tab_title != null) {
+                indicator.setVisibility(i == mCurrentTab ? View.VISIBLE : View.GONE);
                 tv_tab_title.setTextColor(i == mCurrentTab ? mTextSelectColor : mTextUnselectColor);
                 tv_tab_title.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTextsize);
                 tv_tab_title.setPadding((int) mTabPadding, 0, (int) mTabPadding, 0);
@@ -367,7 +267,7 @@ public class ScrollTabLayout extends HorizontalScrollView {
 
 
     public void addNewTab(String title) {
-        View tabView = View.inflate(mContext, R.layout.layout_tab, null);
+        View tabView = View.inflate(mContext, R.layout.layout_scroll_tab, null);
         if (mTitles != null) {
             mTitles.add(title);
         }
@@ -408,83 +308,8 @@ public class ScrollTabLayout extends HorizontalScrollView {
                 canvas.drawRect(paddingLeft, 0, mTabsContainer.getWidth() + paddingLeft, mUnderlineHeight, mRectPaint);
             }
         }
-
-        //draw indicator line
-
-        calcIndicatorRect();
-        if (mIndicatorStyle == STYLE_TRIANGLE) {
-            if (mIndicatorHeight > 0) {
-                mTrianglePaint.setColor(mIndicatorColor);
-                mTrianglePath.reset();
-                mTrianglePath.moveTo(paddingLeft + mIndicatorRect.left, height);
-                mTrianglePath.lineTo(paddingLeft + mIndicatorRect.left / 2 + mIndicatorRect.right / 2, height - mIndicatorHeight);
-                mTrianglePath.lineTo(paddingLeft + mIndicatorRect.right, height);
-                mTrianglePath.close();
-                canvas.drawPath(mTrianglePath, mTrianglePaint);
-            }
-        } else if (mIndicatorStyle == STYLE_BLOCK) {
-            if (mIndicatorHeight < 0) {
-                mIndicatorHeight = height - mIndicatorMarginTop - mIndicatorMarginBottom;
-            } else {
-
-            }
-
-            if (mIndicatorHeight > 0) {
-                if (mIndicatorCornerRadius < 0 || mIndicatorCornerRadius > mIndicatorHeight / 2) {
-                    mIndicatorCornerRadius = mIndicatorHeight / 2;
-                }
-
-                mIndicatorDrawable.setColor(mIndicatorColor);
-                mIndicatorDrawable.setBounds(paddingLeft + (int) mIndicatorMarginLeft + mIndicatorRect.left,
-                        (int) mIndicatorMarginTop, (int) (paddingLeft + mIndicatorRect.right - mIndicatorMarginRight),
-                        (int) (mIndicatorMarginTop + mIndicatorHeight));
-                mIndicatorDrawable.setCornerRadius(mIndicatorCornerRadius);
-                mIndicatorDrawable.draw(canvas);
-            }
-        } else {
-               /* mRectPaint.setColor(mIndicatorColor);
-                calcIndicatorRect();
-                canvas.drawRect(getPaddingLeft() + mIndicatorRect.left, getHeight() - mIndicatorHeight,
-                        mIndicatorRect.right + getPaddingLeft(), getHeight(), mRectPaint);*/
-
-            if (mIndicatorHeight > 0) {
-                mIndicatorDrawable.setColor(mIndicatorColor);
-
-                if (mIndicatorGravity == Gravity.BOTTOM) {
-                    mIndicatorDrawable.setBounds(paddingLeft + (int) mIndicatorMarginLeft + mIndicatorRect.left,
-                            height - (int) mIndicatorHeight - (int) mIndicatorMarginBottom,
-                            paddingLeft + mIndicatorRect.right - (int) mIndicatorMarginRight,
-                            height - (int) mIndicatorMarginBottom);
-                } else {
-                    mIndicatorDrawable.setBounds(paddingLeft + (int) mIndicatorMarginLeft + mIndicatorRect.left,
-                            (int) mIndicatorMarginTop,
-                            paddingLeft + mIndicatorRect.right - (int) mIndicatorMarginRight,
-                            (int) mIndicatorHeight + (int) mIndicatorMarginTop);
-                }
-                mIndicatorDrawable.setCornerRadius(mIndicatorCornerRadius);
-                mIndicatorDrawable.draw(canvas);
-            }
-        }
     }
 
-    public void setIndicatorGravity(int indicatorGravity) {
-        this.mIndicatorGravity = indicatorGravity;
-        invalidate();
-    }
-
-    public void setIndicatorMargin(float indicatorMarginLeft, float indicatorMarginTop,
-                                   float indicatorMarginRight, float indicatorMarginBottom) {
-        this.mIndicatorMarginLeft = dp2px(indicatorMarginLeft);
-        this.mIndicatorMarginTop = dp2px(indicatorMarginTop);
-        this.mIndicatorMarginRight = dp2px(indicatorMarginRight);
-        this.mIndicatorMarginBottom = dp2px(indicatorMarginBottom);
-        invalidate();
-    }
-
-    public void setIndicatorWidthEqualTitle(boolean indicatorWidthEqualTitle) {
-        this.mIndicatorWidthEqualTitle = indicatorWidthEqualTitle;
-        invalidate();
-    }
 
     public void setUnderlineGravity(int underlineGravity) {
         this.mUnderlineGravity = underlineGravity;
@@ -502,15 +327,6 @@ public class ScrollTabLayout extends HorizontalScrollView {
     //setter and getter
     public void setCurrentTab(int currentTab) {
         this.mCurrentTab = currentTab;
-    }
-
-    public int getIndicatorStyle() {
-        return mIndicatorStyle;
-    }
-
-    public void setIndicatorStyle(int indicatorStyle) {
-        this.mIndicatorStyle = indicatorStyle;
-        invalidate();
     }
 
     public float getTabPadding() {
@@ -538,58 +354,6 @@ public class ScrollTabLayout extends HorizontalScrollView {
     public void setTabWidth(float tabWidth) {
         this.mTabWidth = dp2px(tabWidth);
         updateTabStyles();
-    }
-
-    public int getIndicatorColor() {
-        return mIndicatorColor;
-    }
-
-    public void setIndicatorColor(int indicatorColor) {
-        this.mIndicatorColor = indicatorColor;
-        invalidate();
-    }
-
-    public float getIndicatorHeight() {
-        return mIndicatorHeight;
-    }
-
-    public void setIndicatorHeight(float indicatorHeight) {
-        this.mIndicatorHeight = dp2px(indicatorHeight);
-        invalidate();
-    }
-
-    public float getIndicatorWidth() {
-        return mIndicatorWidth;
-    }
-
-    public void setIndicatorWidth(float indicatorWidth) {
-        this.mIndicatorWidth = dp2px(indicatorWidth);
-        invalidate();
-    }
-
-    public float getIndicatorCornerRadius() {
-        return mIndicatorCornerRadius;
-    }
-
-    public void setIndicatorCornerRadius(float indicatorCornerRadius) {
-        this.mIndicatorCornerRadius = dp2px(indicatorCornerRadius);
-        invalidate();
-    }
-
-    public float getIndicatorMarginLeft() {
-        return mIndicatorMarginLeft;
-    }
-
-    public float getIndicatorMarginTop() {
-        return mIndicatorMarginTop;
-    }
-
-    public float getIndicatorMarginRight() {
-        return mIndicatorMarginRight;
-    }
-
-    public float getIndicatorMarginBottom() {
-        return mIndicatorMarginBottom;
     }
 
     public int getUnderlineColor() {
@@ -786,7 +550,6 @@ public class ScrollTabLayout extends HorizontalScrollView {
             mCurrentTab = bundle.getInt("mCurrentTab");
             state = bundle.getParcelable("instanceState");
             if (mCurrentTab != 0 && mTabsContainer.getChildCount() > 0) {
-                Log.i("wutao-->", "onRestoreInstanceState");
                 updateTabSelection(mCurrentTab);
                 scrollToCurrentTab();
             }

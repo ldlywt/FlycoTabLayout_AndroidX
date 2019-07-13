@@ -1,6 +1,7 @@
 package com.flyco.tablayoutsamples.ui;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -9,6 +10,7 @@ import androidx.fragment.app.Fragment;
 
 import com.flyco.tablayout.ScrollTabLayout;
 import com.flyco.tablayout.listener.OnTabSelectListener;
+import com.flyco.tablayout.widget.MsgView;
 import com.flyco.tablayoutsamples.R;
 import com.flyco.tablayoutsamples.utils.FragmentUtils;
 
@@ -40,6 +42,18 @@ public class ScrollTabActivity extends AppCompatActivity implements OnTabSelectL
         tabLayout_1.setTabs(mTabs);
         tabLayout_1.setOnTabSelectListener(this);
         FragmentUtils.add(getSupportFragmentManager(), mFragments, R.id.fl_content, mCurrentIndex);
+
+        tabLayout_1.showDot(4);
+
+        tabLayout_1.showMsg(3, 5);
+        tabLayout_1.setMsgMargin(3, 0, 10);
+        MsgView rtv_2_3 = tabLayout_1.getMsgView(3);
+        if (rtv_2_3 != null) {
+            rtv_2_3.setBackgroundColor(Color.parseColor("#6D8FB0"));
+        }
+
+        tabLayout_1.showMsg(5, 5);
+        tabLayout_1.setMsgMargin(5, 0, 10);
     }
 
     @Override
