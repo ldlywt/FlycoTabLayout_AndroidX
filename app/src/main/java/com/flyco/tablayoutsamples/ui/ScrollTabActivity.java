@@ -5,9 +5,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-
 import com.flyco.tablayout.ScrollTabLayout;
 import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.flyco.tablayout.widget.MsgView;
@@ -16,6 +13,10 @@ import com.flyco.tablayoutsamples.utils.FragmentUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 
 public class ScrollTabActivity extends AppCompatActivity implements OnTabSelectListener {
     private final String[] mTitles = {
@@ -39,7 +40,10 @@ public class ScrollTabActivity extends AppCompatActivity implements OnTabSelectL
 
         mTabs= new ArrayList<>();
         Collections.addAll(mTabs, mTitles);
+        tabLayout_1.setIndicatorBackDrawable(ContextCompat.getDrawable(this, R.drawable.shape_rounded_rectangle_green));
+//        tabLayout_1.setIndicatorWidthAndHeight(20,5);
         tabLayout_1.setTabs(mTabs);
+        tabLayout_1.notifyDataSetChanged();
         tabLayout_1.setOnTabSelectListener(this);
         FragmentUtils.add(getSupportFragmentManager(), mFragments, R.id.fl_content, mCurrentIndex);
 

@@ -117,17 +117,10 @@
 
     <declare-styleable name="ScrollTabLayout">
         <!-- indicator -->
-        <attr name="tl_indicator_color"/>
         <attr name="tl_indicator_height"/>
         <attr name="tl_indicator_width"/>
-        <attr name="tl_indicator_margin_left"/>
-        <attr name="tl_indicator_margin_top"/>
-        <attr name="tl_indicator_margin_right"/>
-        <attr name="tl_indicator_margin_bottom"/>
-        <attr name="tl_indicator_corner_radius"/>
         <attr name="tl_indicator_gravity"/>
-        <attr name="tl_indicator_style"/>
-        <attr name="tl_indicator_width_equal_title"/>
+        <attr name="tl_indicator_drawable" format="reference"/>
 
         <!-- underline -->
         <attr name="tl_underline_color"/>

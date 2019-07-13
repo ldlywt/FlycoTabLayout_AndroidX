@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
@@ -72,6 +73,11 @@ public class ScrollTabLayout extends HorizontalScrollView {
     private SparseArray<Boolean> mInitSetMap = new SparseArray<>();
     private OnTabSelectListener mListener;
 
+    //下面滚动条
+    private int mIndicatorWidth;
+    private int mIndicatorHeight;
+    private Drawable mIndicatorDrawable;
+
     public ScrollTabLayout(Context context) {
         this(context, null, 0);
     }
@@ -125,6 +131,10 @@ public class ScrollTabLayout extends HorizontalScrollView {
         mTabSpaceEqual = ta.getBoolean(R.styleable.ScrollTabLayout_tl_tab_space_equal, false);
         mTabWidth = ta.getDimension(R.styleable.ScrollTabLayout_tl_tab_width, dp2px(-1));
         mTabPadding = ta.getDimension(R.styleable.ScrollTabLayout_tl_tab_padding, mTabSpaceEqual || mTabWidth > 0 ? dp2px(0) : dp2px(20));
+
+        mIndicatorDrawable = ta.getDrawable(R.styleable.ScrollTabLayout_tl_indicator_drawable);
+        mIndicatorHeight = (int) ta.getDimension(R.styleable.ScrollTabLayout_tl_indicator_height, dp2px(3));
+        mIndicatorWidth = (int) ta.getDimension(R.styleable.ScrollTabLayout_tl_indicator_width, dp2px(10));
 
         ta.recycle();
     }
@@ -184,7 +194,7 @@ public class ScrollTabLayout extends HorizontalScrollView {
 
     public void setTabs(ArrayList<String> titles) {
         mTitles = titles;
-        notifyDataSetChanged();
+//        notifyDataSetChanged();
     }
 
     /**
@@ -203,11 +213,33 @@ public class ScrollTabLayout extends HorizontalScrollView {
         updateTabStyles();
     }
 
+    public void setIndicatorBackDrawable(Drawable drawable) {
+        mIndicatorDrawable = drawable;
+    }
+
+    /**
+     * dp为单位
+     */
+    public void setIndicatorWidthAndHeight(int width, int height) {
+        mIndicatorWidth = dp2px(width);
+        mIndicatorHeight = dp2px(height);
+    }
+
     /**
      * 创建并添加tab
      */
     private void addTab(final int position, String title, View tabView) {
         TextView tv_tab_title = (TextView) tabView.findViewById(R.id.tv_tab_title);
+        View indicator = tabView.findViewById(R.id.indicator);
+        if (mIndicatorDrawable != null) {
+            indicator.setBackground(mIndicatorDrawable);
+        }
+        if (mIndicatorWidth != 0 || mIndicatorHeight != 0) {
+            ViewGroup.LayoutParams params = indicator.getLayoutParams();
+            params.width = mIndicatorWidth;
+            params.height = mIndicatorHeight;
+            indicator.setLayoutParams(params);
+        }
         if (tv_tab_title != null) {
             if (title != null) tv_tab_title.setText(title);
         }
