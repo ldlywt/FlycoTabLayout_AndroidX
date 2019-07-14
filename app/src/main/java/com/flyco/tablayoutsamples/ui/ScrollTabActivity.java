@@ -42,6 +42,7 @@ public class ScrollTabActivity extends AppCompatActivity implements OnTabSelectL
         Collections.addAll(mTabs, mTitles);
         tabLayout_1.setIndicatorBackDrawable(ContextCompat.getDrawable(this, R.drawable.shape_rounded_rectangle_green));
 //        tabLayout_1.setIndicatorWidthAndHeight(20,5);
+        tabLayout_1.setLayout(R.layout.layout_scroll_tab_custom);
         tabLayout_1.setTabs(mTabs);
         tabLayout_1.notifyDataSetChanged();
         tabLayout_1.setOnTabSelectListener(this);

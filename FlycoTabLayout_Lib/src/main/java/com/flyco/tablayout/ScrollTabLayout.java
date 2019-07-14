@@ -24,6 +24,8 @@ import com.flyco.tablayout.widget.MsgView;
 
 import java.util.ArrayList;
 
+import androidx.annotation.LayoutRes;
+
 /**
  * 滑动TabLayout,对于ViewPager无依赖
  */
@@ -77,6 +79,8 @@ public class ScrollTabLayout extends HorizontalScrollView {
     private int mIndicatorWidth;
     private int mIndicatorHeight;
     private Drawable mIndicatorDrawable;
+    private @LayoutRes
+    int mLayout = R.layout.layout_scroll_tab;
 
     public ScrollTabLayout(Context context) {
         this(context, null, 0);
@@ -164,6 +168,11 @@ public class ScrollTabLayout extends HorizontalScrollView {
         }
     }
 
+
+    public void setLayout(@LayoutRes int layout) {
+        mLayout = layout;
+    }
+
     private void updateTabSelection(int position) {
         for (int i = 0; i < mTabCount; ++i) {
             View tabView = mTabsContainer.getChildAt(i);
@@ -205,7 +214,7 @@ public class ScrollTabLayout extends HorizontalScrollView {
         this.mTabCount = mTitles.size();
         View tabView;
         for (int i = 0; i < mTabCount; i++) {
-            tabView = View.inflate(mContext, R.layout.layout_scroll_tab, null);
+            tabView = View.inflate(mContext, mLayout, null);
             CharSequence pageTitle = mTitles.get(i);
             addTab(i, pageTitle.toString(), tabView);
         }
@@ -299,7 +308,7 @@ public class ScrollTabLayout extends HorizontalScrollView {
 
 
     public void addNewTab(String title) {
-        View tabView = View.inflate(mContext, R.layout.layout_scroll_tab, null);
+        View tabView = View.inflate(mContext, mLayout, null);
         if (mTitles != null) {
             mTitles.add(title);
         }

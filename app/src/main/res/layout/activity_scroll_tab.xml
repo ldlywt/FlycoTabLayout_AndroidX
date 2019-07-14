@@ -16,8 +16,8 @@
         tl:tl_indicator_height="5dp"
         tl:tl_indicator_width="10dp"
         tl:tl_indicator_drawable="@drawable/shape_rounded_rectangle_green"
-        tl:tl_underline_color="#1A000000"
-        tl:tl_underline_gravity="TOP"
+        tl:tl_underline_color="#f00"
+        tl:tl_underline_gravity="BOTTOM"
         tl:tl_underline_height="1dp"/>
 
 
