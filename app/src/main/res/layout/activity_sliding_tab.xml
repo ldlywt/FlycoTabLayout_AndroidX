@@ -51,6 +51,7 @@
                 android:layout_height="48dp"
                 android:background="#3F9FE0"
                 tl:tl_textAllCaps="true"
+                tl:tl_textSelectSize="18sp"
                 tl:tl_textBold="BOTH"
                 tl:tl_textsize="14sp"/>
 
