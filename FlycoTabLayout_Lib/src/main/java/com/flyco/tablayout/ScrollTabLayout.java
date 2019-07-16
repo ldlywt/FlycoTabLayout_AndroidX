@@ -18,13 +18,13 @@ import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.LayoutRes;
+
 import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.flyco.tablayout.utils.UnreadMsgUtils;
 import com.flyco.tablayout.widget.MsgView;
 
 import java.util.ArrayList;
-
-import androidx.annotation.LayoutRes;
 
 /**
  * 滑动TabLayout,对于ViewPager无依赖
@@ -62,6 +62,7 @@ public class ScrollTabLayout extends HorizontalScrollView {
     private float mDividerWidth;
     private float mDividerPadding;
     private float mTextsize;
+    private float mTextSelectSize;
     private int mTextSelectColor;
     private int mTextUnselectColor;
     private int mTextBold;
@@ -127,6 +128,7 @@ public class ScrollTabLayout extends HorizontalScrollView {
         mDividerPadding = ta.getDimension(R.styleable.ScrollTabLayout_tl_divider_padding, dp2px(12));
 
         mTextsize = ta.getDimension(R.styleable.ScrollTabLayout_tl_textsize, sp2px(14));
+        mTextSelectSize = ta.getDimension(R.styleable.ScrollTabLayout_tl_textSelectSize, sp2px(14));
         mTextSelectColor = ta.getColor(R.styleable.ScrollTabLayout_tl_textSelectColor, Color.parseColor("#ffffff"));
         mTextUnselectColor = ta.getColor(R.styleable.ScrollTabLayout_tl_textUnselectColor, Color.parseColor("#AAffffff"));
         mTextBold = ta.getInt(R.styleable.ScrollTabLayout_tl_textBold, TEXT_BOLD_NONE);
@@ -182,6 +184,7 @@ public class ScrollTabLayout extends HorizontalScrollView {
 
             if (tab_title != null) {
                 tab_title.setTextColor(isSelect ? mTextSelectColor : mTextUnselectColor);
+                tab_title.setTextSize(TypedValue.COMPLEX_UNIT_PX, isSelect ? mTextSelectSize : mTextsize);
                 indicator.setVisibility(isSelect ? View.VISIBLE : View.GONE);
                 if (mTextBold == TEXT_BOLD_WHEN_SELECT) {
                     tab_title.getPaint().setFakeBoldText(isSelect);
@@ -291,7 +294,7 @@ public class ScrollTabLayout extends HorizontalScrollView {
             if (tv_tab_title != null) {
                 indicator.setVisibility(i == mCurrentTab ? View.VISIBLE : View.GONE);
                 tv_tab_title.setTextColor(i == mCurrentTab ? mTextSelectColor : mTextUnselectColor);
-                tv_tab_title.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTextsize);
+                tv_tab_title.setTextSize(TypedValue.COMPLEX_UNIT_PX, i == mCurrentTab ? mTextSelectSize : mTextsize);
                 tv_tab_title.setPadding((int) mTabPadding, 0, (int) mTabPadding, 0);
                 if (mTextAllCaps) {
                     tv_tab_title.setText(tv_tab_title.getText().toString().toUpperCase());
@@ -448,6 +451,16 @@ public class ScrollTabLayout extends HorizontalScrollView {
 
     public void setTextsize(float textsize) {
         this.mTextsize = sp2px(textsize);
+        updateTabStyles();
+    }
+
+
+    public float getTextSelectSize() {
+        return mTextSelectSize;
+    }
+
+    public void setTextSelectSize(float textSelectSize) {
+        mTextSelectSize = sp2px(textSelectSize);
         updateTabStyles();
     }
 
