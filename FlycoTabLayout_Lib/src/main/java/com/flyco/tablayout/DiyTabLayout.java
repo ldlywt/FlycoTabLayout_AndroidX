@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * 滑动TabLayout,对于ViewPager的依赖性强
  * 为了不影响其他的页面，定制一份出来，需求独特
- * 使用的
+ * 使用TabItem,可扩展性强，可根据需求自行修改代码
  * 可实现不同item的颜色不一样，下面的滑块颜色也不一样
  */
 public class DiyTabLayout extends HorizontalScrollView {
