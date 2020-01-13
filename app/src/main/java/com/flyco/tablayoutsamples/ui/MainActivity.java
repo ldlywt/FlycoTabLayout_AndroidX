@@ -3,7 +3,9 @@ package com.flyco.tablayoutsamples.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.flyco.tablayoutsamples.R;
 
 public class MainActivity extends AppCompatActivity {
@@ -34,6 +36,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, ScrollTabActivity.class));
+            }
+        });
+
+        findViewById(R.id.diyTabLayout).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, DiyItemActivity.class));
             }
         });
     }
