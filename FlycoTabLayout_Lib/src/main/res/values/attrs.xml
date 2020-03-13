@@ -64,6 +64,7 @@
     <!-- title -->
     <!-- 设置字体大小 -->
     <attr name="tl_textsize" format="dimension"/>
+    <attr name="tl_textSelectSize" format="dimension"/>
     <!-- 设置字体选中颜色 -->
     <attr name="tl_textSelectColor" format="color"/>
     <!-- 设置字体未选中颜色 -->
